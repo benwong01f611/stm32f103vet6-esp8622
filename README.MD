@@ -4,15 +4,19 @@ This is the API for utilizing the ESP8622 WiFi module on STM32F103VET6. Referenc
 
 The folder ``original`` stores the original version of the code.
 
+## Why I need this
+I am from Hong Kong University of Science and Technology and Iam currently working on a group project in the course "Introduction to Embedded Systems" (course code: ELEC3300) that requires using STM32F103VET6, and my group would like to utilize the ESP8266 on it. However it is so hard to find how to start the module.
+
 ## Requirements
 - USART
 - DMA
 - Timer
 
 ## Steps
+0. Connect B8 to 3.3V, and the USART pin to RX and TX (depends on which USART you are using, for example USART2 is using A2 as TX and A3 as RX, then connect A2 to RX and A3 to TX)
 1. Create a new project with CubeIDE (or other)
 2. Set High Speed Clock to "Crystal/Ceramic Resonator"
-4. Set the USART mode to "Asychronous"
+4. Set the USART mode to "Asynchronous"
 5. Enable NVIC global interrupt for USART
 6. Enable DMA for USART RX
 7. Enable a timer

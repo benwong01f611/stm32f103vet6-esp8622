@@ -12,7 +12,6 @@
 #include "tim.h"
 #include "usart.h"
 #include "lcd.h"
-#include "logger.h"
 
 /* demoap -> Your AP name
  * A12345678 -> password

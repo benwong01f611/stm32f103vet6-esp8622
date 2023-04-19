@@ -1,4 +1,3 @@
-
 #include "wifi.h"
 
 Userdatatype Espdatatype;
