@@ -37,7 +37,7 @@ void USART2_IRQHandler(void)
 }
 ```
 12. Include ``wifi.h`` to ``stm32f1xx.h`` and ``main.h``
-13. Add the following function (you can place it in ``main.h``):
+13. Add the following function (you can place it in ``main.c``):
 ```c
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	static uint8_t count = 0;

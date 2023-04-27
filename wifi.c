@@ -301,13 +301,16 @@ void sendCommandCreate(uint16_t length) {
 	itoa(length, len, 10);
 	counter = strlen(len);
 	uint8_t cmd_len = counter + 11 + 2; // AT+CIPSEND=<len>\r\n, AT+CIPSEND= is 11 characters and \r\n is 2 characters
-	uint8_t* at_send = (uint8_t* )malloc(sizeof(uint8_t) * cmd_len);
-	memset(at_send, 0, cmd_len);
-	strcat((char*)at_send, "AT+CIPSEND=");
+	// Don't use malloc on STM32, it might cause some problem
+	// So limit the data length you want to send within 999 bytes
+	//uint8_t* at_send = (uint8_t* )malloc(sizeof(uint8_t) * cmd_len);
+	char at_send[16];
+	memset(at_send, 0, 16);
+	strcpy((char*)at_send, "AT+CIPSEND=");
 	strcat((char*)at_send, len);
 	strcat((char*)at_send, "\r\n");
-	HAL_UART_Transmit(wifiCom, at_send, cmd_len, 0xFFFF); // Push the command and ready for sending data
-	free(at_send);
+	HAL_UART_Transmit(wifiCom, (uint8_t*)at_send, cmd_len, 0xFFFF); // Push the command and ready for sending data
+	//free(at_send);
 	return;
 }
 
