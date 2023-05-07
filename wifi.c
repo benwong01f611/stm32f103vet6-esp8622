@@ -61,12 +61,12 @@ void USER_UART_Handler(void) {
 void wifiInit(uint8_t MODE) {
 	currentMode = MODE;
 	EnableUsart_IT();
-	HAL_Delay(1000);
-	getCWMode();
+	HAL_Delay(500);
 	if(!wifiStart()){
 		// Failed to start wifi
 		while(1);
 	}
+	getCWMode();
 	if(MODE == CLIENT)
 		clientStart();
 	else if(MODE == SERVER)
@@ -88,24 +88,26 @@ void closePassThrough(void) {
 // Start as station mode
 void clientStart(void) {
 	// Set as station mode
-	Send_AT_commend(CWMODE1, &modeFlag, 500);
-	// Reset
-	if(Send_AT_commend(RST, &rstFlag, 3000))
-		rstFlag = FALSE;
+	if(persent_mode != CLIENT){
+		Send_AT_commend(CWMODE1, &modeFlag, 100);
+		// Reset
+		if(Send_AT_commend(RST, &rstFlag, 500))
+			rstFlag = FALSE;
 
-	// Get CWMode after setting to station mode
-	getCWMode();
+		// Get CWMode after setting to station mode
+		getCWMode();
+	}
 
 	// Connect to AP
 	if(!wifiConnectFlag)
-		Send_AT_commend(CLIENT_WIFI, &wifiConnectFlag, 5000);
+		Send_AT_commend(CLIENT_WIFI, &wifiConnectFlag, 1000);
 
 	// Get IP address
 	do {
 		getIP();
 	} while(strlen(gateway) == 0);
 	// No muxing (multi connection)
-	if(Send_AT_commend(CIPMUX0, &mulConFlag, 200)){
+	if(Send_AT_commend(CIPMUX0, &mulConFlag, 100)){
 	}
 	serverConnect();
 }
@@ -123,26 +125,31 @@ void serverConnect(void) {
 	#endif
 	strcat(cmd,CLIENT_CONNECT_STR3);
 	strcat(cmd, CLIENT_PORT);
-	if(Send_AT_commend(cmd, &serverConnectFlag, 3000))
+	if(Send_AT_commend(cmd, &serverConnectFlag, 500))
 		serverDisConnectFlag = FALSE;
+	while(!serverConnectFlag){}
 }
 
 
 // Disconnect from server
 void serverDisConnect(void) {
-	if(Send_AT_commend("AT+CIPCLOSE", &serverDisConnectFlag, 3000))
+	if(Send_AT_commend("AT+CIPCLOSE", &serverDisConnectFlag, 100))
 		serverConnectFlag = FALSE;
 }
 
 // Start as AP mode
 void serverStart(void) {
-	// Set as AP mode
-	Send_AT_commend(CWMODE2, &modeFlag, 500);
-	// Reset
-	if(Send_AT_commend(RST, &rstFlag, 3000))
-		rstFlag = FALSE;
+	if(persent_mode != SERVER){
+		// Set as AP mode
+		Send_AT_commend(CWMODE2, &modeFlag, 100);
+		// Reset
+		if(Send_AT_commend(RST, &rstFlag, 500))
+			rstFlag = FALSE;
+		// Get CWMode after setting to station mode
+		getCWMode();
+	}
 	// Create AP
-	Send_AT_commend(SERVER_AP, &hotspotFlag, 2000);
+	Send_AT_commend(SERVER_AP, &hotspotFlag, 500);
 
 	#if(SERVER_CREATE)
 		serverCreate();
@@ -152,8 +159,8 @@ void serverStart(void) {
 
 void serverCreate(void) {
 	// Enable muxing
-	Send_AT_commend("AT+CIPMUX=1", &mulConFlag, 200);
-	Send_AT_commend(SERVER_START, &dummy, 500);
+	Send_AT_commend("AT+CIPMUX=1", &mulConFlag, 100);
+	Send_AT_commend(SERVER_START, &dummy, 100);
 }
 
 // Handle data when timer triggers interrupt
@@ -342,7 +349,7 @@ uint8_t wifiStart(void) {
 			return 0;
 		if(Send_AT_commend("AT", &atFlag, 100))
 			break;
-		if(Send_AT_commend("AT+RST", &rstFlag, 1000)) // Unable to start wifi, so we try to reset the module
+		if(Send_AT_commend("AT+RST", &rstFlag, 500)) // Unable to start wifi, so we try to reset the module
 			rstFlag = FALSE; //
 		HAL_Delay(500); // Failed to start wifi, try again in 0.5s
 	}
@@ -403,10 +410,10 @@ void getIP(){
 		HAL_UART_Transmit(wifiCom, (uint8_t *)"AT+CIPSTA?\r\n", 12, 0xFFFF);
 	else if(currentMode == SERVER)
 		HAL_UART_Transmit(wifiCom, (uint8_t *)"AT+CIPAP?\r\n", 11, 0xFFFF);
-
+	HAL_Delay(1000);
 }
 
 // Get current working mode
 void getCWMode(){
-	Send_AT_commend("AT+CWMODE?", &dummy, 500);
+	Send_AT_commend("AT+CWMODE?", &dummy, 100);
 }
