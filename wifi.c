@@ -168,7 +168,7 @@ void recDataHandle(void)
 {
 	static bool recRstFlag = FALSE;
 	if(Espdatatype.AtRecFlag == 1) {
-		// Start ESP8622
+		// Start ESP8266
 		if(findStr("AT\r\r\n\r\nOK"))
 			atFlag = TRUE;
 		// Reset
