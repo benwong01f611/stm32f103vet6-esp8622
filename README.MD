@@ -1,6 +1,6 @@
-# ESP8622 WiFi module for STM32F103VET6
+# ESP8266 WiFi module for STM32F103VET6
 
-This is the API for utilizing the ESP8622 WiFi module on STM32F103VET6. Referenced from [this CSDN article](https://blog.csdn.net/qq_26024785/article/details/107352408), modified for using it on STM32F103VET6.
+This is the API for utilizing the ESP8266 WiFi module on STM32F103VET6. Referenced from [this CSDN article](https://blog.csdn.net/qq_26024785/article/details/107352408), modified for using it on STM32F103VET6.
 
 The folder ``original`` stores the original version of the code.
 
@@ -50,7 +50,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	}
 }
 ```
-14. Add ``wifiInit(CLIENT)`` or ``wifiInit(SERVER)`` to ``main.cpp``, CLIENT means starting ESP8622 as client (station mode) and SERVER means starting ESP8622 as server (AP)
+14. Add ``wifiInit(CLIENT)`` or ``wifiInit(SERVER)`` to ``main.cpp``, CLIENT means starting ESP8266 as client (station mode) and SERVER means starting ESP8266 as server (AP)
 15. Modify ``wifi.c``, change the UART/USART/timer to your configuration
 16. Modify ``wifi.h`` according to your preferences
 17. Done!
